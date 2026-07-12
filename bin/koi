@@ -9,8 +9,8 @@ config = {
   bind_addr: "0.0.0.0", # Bind All Available Interfaces  
   bind_port: "1965", # Default Gemini Port
   file_root_dir: nil, # No Default  
-  erb_enabled: true # Assume Yes
-  key_file_path: nil
+  erb_enabled: true, # Assume Yes
+  key_file_path: nil,
   cert_file_path: nil
 }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module Koi
-  VERSION = "1.0.0"
+  VERSION = "1.0.1"
 end
 
 require_relative './koi/server'
