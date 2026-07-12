@@ -1,0 +1,103 @@
+#+title: Koi Gemini Server
+#+subtitle: A Gemini server that serves templated static .erb files.
+#+author: Justin Woodring
+#+language: en
+
+Koi is another ruby-based Gemini server that supports .erb templating,
+and static files, and handles TLS certs for you.
+
+* Ethos
+
+Koi is designed to make hosting Gemini CGI pages a joyful and
+tranquil experience, uniting the conceptual beauty of a simple web
+with developer happiness.
+
+By using a combination of Ruby powered ERB templating and
+traditional static file serving we distill a solution offering
+the best of both worlds.
+
+* How it works
+
+This server operates in every capacity as a static file server,
+unless the file it is serving begins with . i.e. hidden files or
+the file ends a .erb extension.
+
+Files ending with a .erb extension use the ERB markup syntax to
+generate responses that are assumed to be `gemtext`, under most
+circumstances. That said, each file is executed with it's directory
+as the PWD and it injects binds the following into the ERB environment:
+
+** Request: Object = Gemini Request Received
+*** protocol: String - should always be 'gemini://'
+*** domain: String - the domain name in the absolute URI
+*** path: String - absolute file path relative to served root
+*** query: String - what follows ? in the absolute URI (url_encoded)
+
+** response_status: Integer = nil
+These object can be set to override default gemtext generation. This
+particular property changes the response code with the raw Gemini code
+for a given response e.g. 10 is input required.
+
+** response_metadata: String = nil
+This is the metadata object of the response that can be overridden to
+supply supplementary info for a given response. e.g. a redirect URL,
+a new content type header, a query description text.
+
+** response_content: String = nil
+This can be used to return arbitrary content and overrides what .erb
+evaluates to if set. You could theoretically generate and serve images
+from an .erb by setting this property with the correct mime type
+set in the metadata.
+
+Here is a contrived example that demonstates the power of ERB templating
+in this context:
+
+#+NAME: /posts/index.erb
+#+BEGIN_SRC erb
+# Search my posts
+
+<% if request.query == "" %>
+   <% @response_status = 10 %>
+   <% @response_metadata = "Enter a filter term" %>
+<% end %>
+
+<% `ls`.split("\n").select {|x| x.start_with?(@request.query) and x.end_with?(".gmi")}.each do |item| %>
+    => gemini://mysite.com/posts/<%= item %>
+<% end %>
+#+END_SRC
+
+* Running Your Own Server
+
+Running your own server is as simple as installing one gem: `koi`
+and pointing it at a cert and key that you might even generate
+using `koi`.
+
+#+begin_example
+
+# Defaults are -s nil -b 0.0.0.0 -p 1965 -e (.erb enabled)
+
+koi -s /home/user/public_gmi
+
+OR
+
+koi -s /home/user/public_gmi -b 0.0.0.0 -p 1965
+
+OR
+
+koi -s /home/user/public_gmi -b 0.0.0.0 -p 1965 --no-erb
+
+OR
+
+koi -s /home/user/public_gmi -b 0.0.0.0 -p 1965 -e -k key.pem -c cert.pem
+
+FOR CERTIFICATE GENERATION
+
+koi -g COMMONNAME
+#+end_example
+
+
+* No AI Notice
+
+No AI tools were used at any point during developemnt or
+documentation. This project was expressly 100% hand-written
+by a human.

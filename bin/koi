@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'optparse'
+require_relative '../lib/koi.rb'
+
+# Declare defaults
+config = {
+  bind_addr: "0.0.0.0", # Bind All Available Interfaces  
+  bind_port: "1965", # Default Gemini Port
+  file_root_dir: nil, # No Default  
+  erb_enabled: true # Assume Yes
+  key_file_path: nil
+  cert_file_path: nil
+}
+
+
+# Declare parse options
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage:\tkoi [options]\n\tkoi -s ~/public_gmi -b '0.0.0.0' -p 1965 -e true"
+
+  opts.separator ""
+  opts.separator "Specific options:"
+  
+  opts.on("-s", "--serve FILE_ROOT", String, "Required. File root of public .gmi and .erb files") do |v|
+    config[:file_root_dir] = v 
+  end
+  
+  opts.on("-b", "--bind_addr ADDR", String, "Bind address for the server to listen on") do |v|
+    config[:bind_addr] = v 
+  end
+
+  opts.on("-p", "--port PORT", Integer, "Bind port for the server to listen on") do |v|
+    config[:bind_port] = v 
+  end
+  
+  opts.on("-e", "--[no]-erb", "Enable serving .erb files") do |v|
+    config[:erb_enabled] = v 
+  end
+
+  opts.separator "Certificate options, if either is unset the server will generate a throwaway self-signed cert on-demand."
+  
+  opts.on("-k", "--key KEY_FILE_PATH", String, "Path to your private key.") do |v|
+    config[:key_file_path] = v 
+  end
+
+  opts.on("-c", "--cert CERT_FILE_PATH", String, "Path to your certificate.") do |v|
+    config[:cert_file_path] = v 
+  end
+  
+  opts.separator ""
+  opts.separator "Common options:"
+
+  opts.on_tail("-g", "--generate-cert CN", "Generate a self-signed certficate") do |cn|
+    key, cert = Koi::SSL.generate_key_and_cert(cn)
+    File.write('koi_private_key.pem', key.to_pem)
+    File.write('koi_certificate.pem', cert.to_pem)
+
+    puts "Key written to koi_private_key.pem successfully!"
+    puts "Key written to koi_certificate.pem successfully!"
+    exit
+  end
+    
+  opts.on_tail("-h", "--help", "Prints this help") do
+    puts parser
+    exit
+  end
+end
+
+# Parse output and validate required fields.
+puts parser.parse!(ARGV)
+
+if config[:file_root_dir] == nil then
+  puts parser
+  exit
+end
+
+# Run the Koi server!
+
+koi = Koi::Pond.new(config)
+koi.run
+
+
+
+
+  
+
