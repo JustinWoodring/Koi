@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'koi'
+  s.name        = 'koi-server'
   s.version     = '1.0.0'
   s.licenses    = ['MIT']
   s.summary     = "Koi is a ruby-based Gemini server that supports ERB templating."
@@ -15,7 +15,8 @@ the best of both worlds.
 "
   s.authors     = ["Justin Woodring"]
   s.email       = 'jwoodrg@gmail.com'
-  s.files       = spec.files = `git ls-files -z`.split("\x0")
+  s.files       = `git ls-files -z`.split("\x0")
+  s.executables << "koi"
   s.homepage    = 'https://rubygems.org/gems/koi'
   s.metadata    = { "source_code_uri" => "https://github.com/JustinWoodring/Koi" }
 end
