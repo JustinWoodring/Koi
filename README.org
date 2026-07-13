@@ -3,6 +3,11 @@
 #+author: Justin Woodring
 #+language: en
 
+
+#+begin_html
+<a href="https://badge.fury.io/rb/koi-server"><img src="https://badge.fury.io/rb/koi-server.svg?icon=si%3Arubygems" alt="Gem Version" height="18"></a>
+#+end_html
+
 Koi is another ruby-based Gemini server that supports .erb templating,
 and static files, and handles TLS certs for you.
 
