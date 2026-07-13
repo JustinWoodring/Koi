@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'koi-server'
-  s.version     = '1.0.1'
+  s.version     = '1.0.2'
   s.licenses    = ['MIT']
   s.summary     = "Koi is a ruby-based Gemini server that supports ERB templating."
   s.description = "Koi is a ruby-based Gemini server that supports .erb templating, and static files, and handles TLS certs for you.
