@@ -28,7 +28,7 @@ class Koi::SSL
     cert = OpenSSL::X509::Certificate.new(cert_data)
 
     # Verify that the private key matches the certificate
-    if cert.check_private_key(private_key)
+    if !cert.check_private_key(private_key)
       raise "Error: Private key does not match the certificate!"
     end
 
